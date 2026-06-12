@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Step 3 — Compliance reporter — Lab Guide 2</title>
+<style>
+:root{--purple:#30053a;--pink:#fb4dc3;--orange:#fc9634;--lilac:#6633fc;--mint:#64fcc9;--softpnk:#fbd0ee;--panel:#f7f7f7;--card:#fafafa;--line:#e0e0e0;--grey:#555}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif;color:#000;background:#fff;line-height:1.55}
+header.top{background:var(--purple);color:#fff;padding:28px 48px 22px}
+header.top .lab{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--mint);margin-bottom:6px}
+header.top h1{font-size:32px;font-weight:700;margin:0}
+header.top .sub{font-size:16px;color:var(--pink);margin:4px 0 0}
+nav.toc{background:var(--softpnk);padding:12px 48px;border-bottom:4px solid var(--pink);font-size:14px;display:flex;flex-wrap:wrap;gap:18px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(48,5,58,.08)}
+nav.toc a{color:var(--purple);text-decoration:none;font-weight:600;padding:2px 0}
+nav.toc a:hover{text-decoration:underline}
+nav.toc a.current{border-bottom:2px solid var(--pink)}
+main{max-width:1400px;margin:0 auto;padding:32px 48px 28px}
+h2{color:var(--purple);font-size:26px;border-bottom:3px solid var(--pink);padding-bottom:8px;margin-top:36px;margin-bottom:16px}
+h2:first-of-type{margin-top:0}
+h3{color:var(--purple);font-size:20px;margin-top:24px;margin-bottom:8px}
+.agent{border-left:6px solid var(--pink);background:var(--panel);padding:16px 22px 12px;margin:12px 0 22px;border-radius:6px}
+.agent .row{display:grid;grid-template-columns:160px 1fr;gap:6px 16px;margin-bottom:6px;align-items:baseline}
+.agent .lbl{font-weight:700;color:var(--purple);font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+.agent .val{font-size:15px}
+.agent .name{font-family:'Consolas','Menlo',monospace;font-size:20px;font-weight:700}
+.agent .desc{font-style:italic}
+.panel{background:var(--panel);border-left:6px solid var(--pink);border-radius:6px;padding:0;margin:10px 0 20px;position:relative;overflow:hidden}
+.panel .panel-head{display:flex;justify-content:space-between;align-items:center;background:var(--purple);color:#fff;padding:8px 14px;font-size:13px;font-weight:700;letter-spacing:.05em}
+.panel pre{margin:0;padding:16px;font-family:'Consolas','Menlo',monospace;font-size:13px;line-height:1.5;white-space:pre-wrap;color:#111;overflow-x:auto}
+.copy-btn{background:var(--pink);color:#fff;border:none;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.copy-btn:hover{background:#ff70d2}
+.copy-btn.copied{background:var(--lilac)}
+table.guidelines{width:100%;border-collapse:collapse;margin:10px 0 22px;font-size:14px}
+table.guidelines th{background:var(--purple);color:#fff;text-align:left;padding:8px 12px;font-weight:700}
+table.guidelines td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+table.guidelines tr:nth-child(even) td{background:var(--card)}
+table.guidelines td.num{width:40px;text-align:center;color:var(--pink);font-weight:700}
+table.guidelines td.gname{width:220px;font-family:'Consolas','Menlo',monospace;font-weight:700;color:var(--purple)}
+ol.steps{padding-left:0;list-style:none;counter-reset:step;margin:10px 0 22px}
+ol.steps li{counter-increment:step;background:var(--card);border-radius:4px;padding:10px 14px 10px 48px;margin-bottom:6px;position:relative;font-size:14px}
+ol.steps li::before{content:counter(step);position:absolute;left:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--pink);color:#fff;border-radius:4px;text-align:center;line-height:28px;font-weight:700;font-size:13px}
+.footer-note{background:var(--panel);border-left:4px solid var(--orange);padding:10px 14px;margin:10px 0 22px;font-size:13px;color:var(--purple);font-style:italic}
+.clauses{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:10px 0 22px}
+.clauses .col{background:var(--card);border-radius:6px;overflow:hidden}
+.clauses .col header{color:#fff;padding:8px 12px;font-size:13px;font-weight:700}
+.clauses .col ul{list-style:none;margin:0;padding:10px 12px;font-family:'Consolas','Menlo',monospace;font-size:12px;line-height:1.55}
+.clauses .col.context header{background:var(--pink)}
+.clauses .col.support header{background:var(--orange)}
+.clauses .col.operation header{background:var(--lilac)}
+.clauses .col.perf header{background:var(--purple)}
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.test-grid .card{background:var(--card);border-left:4px solid var(--pink);padding:12px 14px;border-radius:4px;font-size:14px}
+.test-grid .card .t{color:var(--purple);font-weight:700;margin-bottom:4px}
+.pager{display:flex;justify-content:space-between;margin:40px 0 0;padding-top:20px;border-top:1px solid var(--line)}
+.pager a{padding:10px 16px;border-radius:4px;background:var(--purple);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+.pager a:hover{background:#480760}
+.pager a.disabled{visibility:hidden}
+footer.brand{background:var(--purple);color:#fff;text-align:center;padding:24px;font-size:13px}
+footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
+.cards-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0 24px}
+.cards-overview a{background:var(--panel);border-radius:6px;border-left:6px solid var(--pink);padding:14px 16px;text-decoration:none;color:#000;display:block;transition:transform .12s,box-shadow .12s}
+.cards-overview a:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(48,5,58,.12)}
+.cards-overview a .step{color:var(--pink);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.cards-overview a .name{color:var(--purple);font-weight:700;font-size:17px;margin:4px 0}
+.cards-overview a .blurb{color:#333;font-size:13px;line-height:1.45}
+@media (max-width:800px){main{padding:24px}.clauses{grid-template-columns:1fr 1fr}.test-grid{grid-template-columns:1fr}.agent .row{grid-template-columns:1fr}}
+.ui-shot{margin:14px 0 26px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:6px;padding:18px;text-align:center}
+.ui-shot img{max-width:100%;width:auto;height:auto;border:1px solid var(--line);border-radius:4px;display:block;margin:0 auto}
+.ui-shot.full img{width:100%}
+.ui-shot .cap{font-size:13px;color:var(--purple);margin-top:10px;font-weight:600}
+.ui-shot .sub{font-size:12px;color:var(--grey);margin-top:4px;font-style:italic}
+.ui-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0 26px}
+.ui-row .ui-shot{margin:0}
+@media (max-width:800px){.ui-row{grid-template-columns:1fr}}
+.downloads{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:14px 0 28px}
+.downloads .dl-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--mint);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.downloads .dl-card .fname{font-family:'Consolas','Menlo',monospace;font-weight:700;color:var(--purple);font-size:14px;word-break:break-all}
+.downloads .dl-card .desc{font-size:13px;color:#333;flex:1}
+.downloads .dl-card a.dl-btn{display:inline-block;align-self:flex-start;background:var(--purple);color:#fff;text-decoration:none;padding:6px 14px;border-radius:4px;font-size:12px;font-weight:700;letter-spacing:.02em;font-family:inherit}
+.downloads .dl-card a.dl-btn:hover{background:#480760}
+.dl-inline{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--mint);border-radius:6px;padding:10px 14px;margin:6px 0 16px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.dl-inline .info{flex:1;min-width:200px;color:#333}
+.dl-inline .fname{font-family:'Consolas','Menlo',monospace;font-weight:700;color:var(--purple)}
+.dl-inline a.dl-btn{background:var(--purple);color:#fff;text-decoration:none;padding:6px 14px;border-radius:4px;font-size:12px;font-weight:700;white-space:nowrap;font-family:inherit}
+.dl-inline a.dl-btn:hover{background:#480760}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="lab">AI GovNews Labs</div>
+  <h1>Lab guide 2 — ISO 9001:2015 compliance agent</h1>
+  <div class="sub">Step 3 — Compliance reporter</div>
+</header>
+
+<nav class="toc">
+  <a href="index.html" class="">Overview</a>
+  <a href="step-1-gap-analyser.html" class="">Step 1</a>
+  <a href="step-2-policy-rewriter.html" class="">Step 2</a>
+  <a href="step-3-compliance-reporter.html" class="current">Step 3</a>
+  <a href="step-4-orchestrator.html" class="">Step 4</a>
+  <a href="step-5-test.html" class="">Step 5</a>
+</nav>
+
+<main>
+
+<h2>Step 3 — Build the compliance reporter</h2>
+<p>A Default-style agent that turns the gap analysis and rewritten document into a clean executive summary suitable for senior stakeholders and external auditors.</p>
+
+<h3>Step 3.1 — Setup</h3>
+<div class="agent">
+  <div class="row"><span class="lbl">Agent name</span><span class="val name">[Your initials] compliance-reporter</span></div>
+  <div class="row"><span class="lbl">Description</span><span class="val desc">Produces an executive compliance report from an ISO 9001:2015 gap analysis and rewritten document. Returns before/after scores, critical and partial gaps, sections changed and next steps — in plain English for senior management and auditors.</span></div>
+  <div class="row"><span class="lbl">Style</span><span class="val">Default</span></div>
+  <div class="row"><span class="lbl">Tools</span><span class="val">None</span></div>
+</div>
+
+<div class="ui-shot full"><img src="ui-create-agent.png" alt="Create an agent — Name + Description"><div class="cap">Create an agent — Name + Description</div><div class="sub">From the Agent Builder home, click <strong>Create new agent</strong> → <strong>Create from scratch</strong> and fill in Name and Description.</div></div>
+<div class="ui-shot"><img src="ui-agent-style.png" alt="Agent style — keep Default"><div class="cap">Agent style — keep Default</div><div class="sub">Below the agent details, leave Agent style on <strong>Default</strong>.</div></div>
+
+<h3>Step 3.2 — Behaviour</h3>
+<div class="panel">
+  <div class="panel-head"><span>Paste into the agent's Behaviour field</span><button class="copy-btn" onclick="copyPanel(this)">Copy</button></div>
+<pre># Role
+Quality management compliance reporter. Inputs: original document summary, gap analysis, rewritten document. Output: a clear, professional executive compliance report.
+
+## Report format
+EXECUTIVE COMPLIANCE REPORT
+ISO 9001:2015 Gap Assessment &amp; Remediation Summary
+
+Document assessed: [title].  Date: [today].  Standard: ISO 9001:2015.
+Compliance score: BEFORE [score]%   →   AFTER [estimated]%
+
+Summary — 2–3 sentence plain-English overview of the original document and what changed.
+Critical gaps (NON-COMPLIANT) — bullet list with clause number + one-line description.
+Partial gaps addressed — bullet list with clause number + improvement.
+Sections added — list each new section with the clause it satisfies.
+Sections modified — list each modified section with clause + brief description.
+Compliant sections — list sections already compliant.
+
+Next steps:
+1. Approve the rewritten document with senior management.
+2. Communicate the update to all staff.
+3. Schedule an internal audit against ISO 9001:2015 within 90 days.
+4. Engage an accredited certification body when ready.
+
+## Style
+Clear, concise British English. Plain language — non-technical stakeholders may read this.</pre>
+</div>
+
+<div class="ui-shot"><img src="ui-behaviour.png" alt="Behavior — paste the Instructions here"><div class="cap">Behavior — paste the Instructions here</div><div class="sub">Scroll to the Behavior section and paste the block above into the <strong>Instructions</strong> field.</div></div>
+
+<h3>Step 3.3 — Guidelines</h3>
+<table class="guidelines">
+  <thead><tr><th>#</th><th>Name</th><th>When (condition)</th><th>Then (action)</th></tr></thead>
+  <tbody>
+    <tr><td class="num">1</td><td class="gname">low_score_escalation</td><td>The original compliance score was below 50%.</td><td>Add an executive note at the top flagging significant compliance risk.</td></tr>
+    <tr><td class="num">2</td><td class="gname">customer_risk_highlight</td><td>Critical gaps relate to customer requirements (8.2) or nonconforming outputs (8.7).</td><td>Call these out under a 'Risk Highlight' heading.</td></tr>
+    <tr><td class="num">3</td><td class="gname">all_gaps_addressed</td><td>The rewrite has addressed all identified gaps.</td><td>State clearly that the updated document satisfies all assessed clauses.</td></tr>
+  </tbody>
+</table>
+
+
+<div class="ui-shot"><img src="ui-guidelines.png" alt="Guidelines — Add Guideline"><div class="cap">Guidelines — Add Guideline</div><div class="sub">Scroll to the Guidelines section and click <strong>Add Guideline</strong> for each row in the table above.</div></div>
+
+<div class="pager">
+  <a href="step-2-policy-rewriter.html">← Step 2 — Policy rewriter</a>
+  <a href="step-4-orchestrator.html">Step 4 — Orchestrator →</a>
+</div>
+</main>
+
+<footer class="brand">
+  <div>info@celerity-uk.com  |  0845 565 2097  |  celerity-uk.com</div>
+  <div>Lab guide 2 — ISO 9001:2015 compliance agent</div>
+  <div class="tag">Transforming Technology. Empowering People.</div>
+</footer>
+
+<script>
+function copyPanel(btn){
+  const pre = btn.closest('.panel').querySelector('pre');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(()=>{flash(btn);}).catch(()=>{
+    const range = document.createRange(); range.selectNodeContents(pre);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    document.execCommand('copy'); sel.removeAllRanges(); flash(btn);
+  });
+}
+function flash(btn){
+  const original = btn.textContent;
+  btn.textContent = '✓ Copied'; btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent = original; btn.classList.remove('copied');}, 1800);
+}
+</script>
+</body>
+</html>
