@@ -55,7 +55,7 @@ ol.steps li::before{content:counter(step);position:absolute;left:8px;top:50%;tra
 .clauses .col.context header{background:var(--orange)}
 .clauses .col.support header{background:var(--orange)}
 .clauses .col.operation header{background:var(--orange)}
-.clauses .col.perf header{background:var(--purple)}
+.clauses .col.perf header{background:var(--orange)}
 .test-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
 .test-grid .card{background:var(--card);border-left:4px solid var(--orange);padding:12px 14px;border-radius:4px;font-size:14px}
 .test-grid .card .t{color:var(--purple);font-weight:700;margin-bottom:4px}
@@ -208,4 +208,33 @@ This format renders nicely in chat AND pastes into Word with headings, bold and 
   <div>info@celerity-uk.com  |  0845 565 2097  |  celerity-uk.com</div>
   <div>Lab guide 2 — ISO 9001:2015 compliance agent</div>
   <div class="tag">Transforming Technology. Empowering People.</div>
-</fo
+</footer>
+
+<script>
+function copyPanel(btn){
+  const pre = btn.closest('.panel').querySelector('pre');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(()=>{flash(btn);}).catch(()=>{
+    const range = document.createRange(); range.selectNodeContents(pre);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    document.execCommand('copy'); sel.removeAllRanges(); flash(btn);
+  });
+}
+function copyCard(btn){
+  const card = btn.closest('.card');
+  const promptEl = card.querySelector('.prompt');
+  const text = promptEl ? promptEl.textContent.trim() : '';
+  navigator.clipboard.writeText(text).then(()=>{flash(btn);}).catch(()=>{
+    const range = document.createRange(); range.selectNodeContents(promptEl);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    document.execCommand('copy'); sel.removeAllRanges(); flash(btn);
+  });
+}
+function flash(btn){
+  const original = btn.textContent;
+  btn.textContent = '✓ Copied'; btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent = original; btn.classList.remove('copied');}, 1800);
+}
+</script>
+</body>
+</html>

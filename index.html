@@ -9,7 +9,12 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif;color:#000;background:#fff;line-height:1.55}
-header.top{background:var(--purple);color:#fff;padding:28px 48px 22px}
+header.top{background:var(--purple);color:#fff;padding:28px 48px 22px;display:flex;align-items:center;justify-content:space-between;gap:32px}
+header.top .title-block{flex:1;min-width:0}
+header.top .partners{display:flex;align-items:center;gap:8px;flex-shrink:0}
+header.top .partners img{height:192px;width:auto;filter:brightness(0) invert(1);opacity:.95}
+header.top .partners .x{color:var(--mint);font-size:18px;font-weight:300;opacity:.6}
+@media (max-width:800px){header.top{flex-direction:column;align-items:flex-start;gap:18px}header.top .partners img{height:150px}}
 header.top .lab{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--mint);margin-bottom:6px}
 header.top h1{font-size:32px;font-weight:700;margin:0}
 header.top .sub{font-size:16px;color:#fff;margin:4px 0 0}
@@ -50,7 +55,7 @@ ol.steps li::before{content:counter(step);position:absolute;left:8px;top:50%;tra
 .clauses .col.context header{background:var(--orange)}
 .clauses .col.support header{background:var(--orange)}
 .clauses .col.operation header{background:var(--orange)}
-.clauses .col.perf header{background:var(--purple)}
+.clauses .col.perf header{background:var(--orange)}
 .test-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
 .test-grid .card{background:var(--card);border-left:4px solid var(--orange);padding:12px 14px;border-radius:4px;font-size:14px}
 .test-grid .card .t{color:var(--purple);font-weight:700;margin-bottom:4px}
@@ -59,6 +64,9 @@ ol.steps li::before{content:counter(step);position:absolute;left:8px;top:50%;tra
 .pager a:hover{background:#480760}
 .pager a.disabled{visibility:hidden}
 footer.brand{background:var(--purple);color:#fff;text-align:center;padding:24px;font-size:13px}
+footer.brand .partners-footer{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:14px}
+footer.brand .partners-footer img{height:126px;width:auto;filter:brightness(0) invert(1);opacity:.85}
+footer.brand .partners-footer .x{color:var(--mint);font-size:16px;font-weight:300;opacity:.6}
 footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
 .cards-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0 24px}
 .cards-overview a{background:var(--panel);border-radius:6px;border-left:6px solid var(--orange);padding:14px 16px;text-decoration:none;color:#000;display:block;transition:transform .12s,box-shadow .12s}
@@ -77,9 +85,16 @@ footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
 </head>
 <body>
 <header class="top">
-  <div class="lab">Celerity | Gov News | Public Sector AI Experience</div>
-  <h1>Lab guide 2 — ISO 9001:2015 compliance agent</h1>
-  <div class="sub">Overview</div>
+  <div class="title-block">
+    <div class="lab">Celerity | Gov News | Public Sector AI Experience</div>
+    <h1>Lab guide 2 — ISO 9001:2015 compliance agent</h1>
+    <div class="sub">Overview</div>
+  </div>
+  <div class="partners">
+    <img src="Celerity_Logo.png" alt="Celerity">
+    <span class="x">&times;</span>
+    <img src="IBM_Logo.png" alt="IBM">
+  </div>
 </header>
 
 <nav class="toc">
@@ -203,18 +218,37 @@ footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
     <div class="name">Orchestrator</div>
     <div class="blurb">ReAct agent that talks to Olivia and coordinates the three collaborators.</div>
   </a>
+  <a href="step-5-test.html">
+    <div class="step">Step 5</div>
+    <div class="name">Test your agent</div>
+    <div class="blurb">Upload Brookmere's quality manual and watch the full pipeline run.</div>
+  </a>
 </div>
 
+<h2>Lab materials</h2>
+<p>Download the sample quality manual you'll feed into the agent in Step 5. It's a deliberately gap-ridden document &mdash; exactly the kind of legacy manual Olivia inherits in real life.</p>
+<div class="downloads">
+  <div class="dl-card">
+    <div class="fname">Brookmere-Quality-Manual.pdf</div>
+    <div class="desc">A 13-section quality manual for a fictional manufacturer (still referencing ISO 9001:2008 &mdash; Olivia's worst nightmare). Upload it via Chat with Documents on the orchestrator and ask for an ISO 9001:2015 assessment.</div>
+    <a class="dl-btn" href="Brookmere-Quality-Manual.pdf" download>Download</a>
+  </div>
+</div>
 
 <div class="pager">
-  <a class="disabled" href="#">←</a>
-  <a href="step-1-gap-analyser.html">Step 1 — Gap analyser →</a>
+  <a class="disabled" href="#">&larr;</a>
+  <a href="step-1-gap-analyser.html">Step 1 &mdash; Gap analyser &rarr;</a>
 </div>
 </main>
 
 <footer class="brand">
+  <div class="partners-footer">
+    <img src="Celerity_Logo.png" alt="Celerity">
+    <span class="x">&times;</span>
+    <img src="IBM_Logo.png" alt="IBM">
+  </div>
   <div>info@celerity-uk.com  |  0845 565 2097  |  celerity-uk.com</div>
-  <div>Lab guide 2 — ISO 9001:2015 compliance agent</div>
+  <div>Lab guide 2 &mdash; ISO 9001:2015 compliance agent</div>
   <div class="tag">Transforming Technology. Empowering People.</div>
 </footer>
 
@@ -228,7 +262,21 @@ function copyPanel(btn){
     document.execCommand('copy'); sel.removeAllRanges(); flash(btn);
   });
 }
+function copyCard(btn){
+  const card = btn.closest('.card');
+  const promptEl = card.querySelector('.prompt');
+  const text = promptEl ? promptEl.textContent.trim() : '';
+  navigator.clipboard.writeText(text).then(()=>{flash(btn);}).catch(()=>{
+    const range = document.createRange(); range.selectNodeContents(promptEl);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    document.execCommand('copy'); sel.removeAllRanges(); flash(btn);
+  });
+}
 function flash(btn){
   const original = btn.textContent;
   btn.textContent = '✓ Copied'; btn.classList.add('copied');
-  setTimeout(()=>{btn.textContent = original; btn.classList.remove(
+  setTimeout(()=>{btn.textContent = original; btn.classList.remove('copied');}, 1800);
+}
+</script>
+</body>
+</html>
