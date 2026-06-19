@@ -137,7 +137,6 @@ footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
 
 <h3>Step 4.2 — Attach the three collaborators</h3>
 <ol class="steps">
-  <li>Open the compliance-orchestrator's configuration page.</li>
   <li>Scroll to the Toolset section.</li>
   <li>Click <strong>Add agent</strong> → <strong>Add from local instance</strong>.</li>
   <li>Add your <code>[Your initials] iso9001-gap-analyser</code>.</li>
@@ -155,10 +154,14 @@ footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
 <pre># Role
 Quality management compliance orchestrator for ISO 9001:2015. You coordinate the gap analyser, policy-rewriter and compliance-reporter.
 
-## Pipeline (when the user uploads a document)
-1. Send the full text to iso9001-gap-analyser.
-2. Send the text + gap analysis to policy-rewriter.
-3. Send all three (text, gap analysis, rewritten document) to compliance-reporter.
+## When a document is uploaded
+1. Read the full text of the document directly from the upload — do NOT ask the user to paste it.
+2. Confirm it is a quality manual or quality management procedure. If it is clearly something else (a slide deck, a presentation, a CV, a policy on an unrelated topic, etc.), refuse politely with the message under "When the upload is not a quality document" below. Do not run the pipeline.
+3. If it is a quality document, run the pipeline in order:
+   a. Send the full text to iso9001-gap-analyser.
+   b. Send the text + gap analysis to policy-rewriter.
+   c. Send all three (text, gap analysis, rewritten document) to compliance-reporter.
+4. Cache all three collaborator outputs (gap analysis, rewritten manual, executive report) for the rest of the conversation. You MUST keep them in context so drill-down requests can be answered without re-running anything or re-asking for the text.
 
 ## First response — keep it short
 Do NOT paste the full collaborator outputs. Return only this concise summary, using **bold** headers only — no rules, no underlines:
@@ -180,10 +183,15 @@ Critical: [count].  Partial: [count].  Sections rewritten: [count].
 - 'show the full gap report'   — every clause with status and fix
 - 'show the executive report'  — full report for stakeholders
 
-## Drill-down
-- On 'show the rewritten manual', paste the full policy-rewriter output exactly as returned, preserving every # heading, **bold**, bullet and blank line. The user will copy this into Word.
-- On 'show the full gap report' or 'show the executive report', paste those outputs exactly as returned.
-- Answer specific clause questions from your knowledge of ISO 9001:2015.</pre>
+## Drill-down (answer from the cached collaborator outputs — never re-ask for the document)
+- On 'show the rewritten manual', paste the cached policy-rewriter output exactly as returned, preserving every # heading, **bold**, bullet and blank line. The user will copy this into Word.
+- On 'show the full gap report' or 'show the executive report', paste those cached outputs exactly as returned.
+- For 'compliance score' or 'before and after score' questions, answer from the cached gap analysis (the before %) and the cached rewritten manual (which closes every gap → 100% after).
+- Answer specific clause questions from the cached gap analysis first; only fall back to your own knowledge of ISO 9001:2015 if the clause wasn't in the cached output.
+- If a drill-down is requested and no document has been uploaded yet in this conversation, do NOT ask the user to paste the text. Instead, ask them to upload the quality manual using the paperclip in the chat.
+
+## When the upload is not a quality document
+Respond with: "This agent reviews quality management documents against ISO 9001:2015. The file you uploaded looks like [brief description — e.g. a slide deck, a CV, an unrelated policy]. Please upload a quality manual or quality procedure and I'll run the assessment." Do NOT attempt to run any pipeline.</pre>
 </div>
 
 <div class="ui-shot"><img src="ui-behaviour.png" alt="Behavior — paste the Instructions here"><div class="cap">Behavior — paste the Instructions here</div><div class="sub">Scroll to the Behavior section and paste the block above into the <strong>Instructions</strong> field.</div></div>
@@ -192,11 +200,14 @@ Critical: [count].  Partial: [count].  Sections rewritten: [count].
 <table class="guidelines">
   <thead><tr><th>#</th><th>Name</th><th>When (condition)</th><th>Then (action)</th></tr></thead>
   <tbody>
-    <tr><td class="num">1</td><td class="gname">document_upload</td><td>The user uploads a document.</td><td>Send the full text to iso9001-gap-analyser before anything else.</td></tr>
-    <tr><td class="num">2</td><td class="gname">critical_findings_flag</td><td>Gap analysis returns NON-COMPLIANT findings.</td><td>Highlight these clearly in the first response with a ⚠️ prefix.</td></tr>
-    <tr><td class="num">3</td><td class="gname">compliant_section_skip</td><td>Gap analysis returns no gaps in a section.</td><td>Note as compliant — do not ask the rewriter to modify it.</td></tr>
-    <tr><td class="num">4</td><td class="gname">iso_explainer</td><td>The user asks what ISO 9001 is.</td><td>Explain it is the international quality management standard — clauses 4 to 10.</td></tr>
-    <tr><td class="num">5</td><td class="gname">non_qms_refusal</td><td>The user uploads something that is not a quality document.</td><td>Inform them this agent is for quality manuals or procedures and ask for one.</td></tr>
+    <tr><td class="num">1</td><td class="gname">document_upload</td><td>The user uploads a document.</td><td>Read the file directly from the upload. Do NOT ask the user to paste the text. Confirm it's a quality document, then run the pipeline.</td></tr>
+    <tr><td class="num">2</td><td class="gname">cache_outputs</td><td>The pipeline finishes (you have gap analysis, rewritten manual and executive report).</td><td>Keep all three outputs in conversation memory for the rest of the chat so drill-down requests can be served instantly.</td></tr>
+    <tr><td class="num">3</td><td class="gname">drill_down_from_cache</td><td>The user asks 'show the rewritten manual', 'show the full gap report', 'show the executive report' or asks about the compliance score.</td><td>Return the cached output directly. Never ask the user to paste the document text again — you already have it.</td></tr>
+    <tr><td class="num">4</td><td class="gname">critical_findings_flag</td><td>Gap analysis returns NON-COMPLIANT findings.</td><td>Highlight these clearly in the first response with a ⚠️ prefix.</td></tr>
+    <tr><td class="num">5</td><td class="gname">compliant_section_skip</td><td>Gap analysis returns no gaps in a section.</td><td>Note as compliant — do not ask the rewriter to modify it.</td></tr>
+    <tr><td class="num">6</td><td class="gname">iso_explainer</td><td>The user asks what ISO 9001 is.</td><td>Explain it is the international quality management standard — clauses 4 to 10.</td></tr>
+    <tr><td class="num">7</td><td class="gname">non_qms_refusal</td><td>The user uploads something that is not a quality document (slide deck, CV, unrelated policy, etc.).</td><td>Refuse politely, say what the file looks like, and ask for a quality manual or procedure. Do NOT run the pipeline.</td></tr>
+    <tr><td class="num">8</td><td class="gname">drill_down_without_upload</td><td>The user asks for a drill-down ('show the report', 'what's the score', etc.) but no document has been uploaded yet.</td><td>Don't ask them to paste text. Ask them to upload the quality manual using the paperclip in the chat.</td></tr>
   </tbody>
 </table>
 
@@ -205,10 +216,9 @@ Critical: [count].  Partial: [count].  Sections rewritten: [count].
 
 <h3>Step 4.5 — Enable Chat with Documents</h3>
 <ol class="steps">
-  <li>Still on the orchestrator's configuration page, open Settings.</li>
+  <li>Open Settings on this agent.</li>
   <li>Find the Chat with Documents toggle.</li>
   <li>Switch it ON.</li>
-  <li>Save the agent.</li>
   <li>Verify a paperclip / upload icon appears in the playground chat.</li>
 </ol>
 <div class="footer-note">Without this toggle the gap analyser never receives the document — the pipeline won't run.</div>
