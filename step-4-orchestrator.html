@@ -125,6 +125,7 @@ footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
 <p>The agent Olivia actually talks to. Accepts the uploaded document, coordinates the three collaborators in order, and returns a concise summary first with drill-down on request.</p>
 
 <h3>Step 4.1 — Setup</h3>
+<div class="ui-shot"><img src="ui-build-button.png" alt="Hamburger menu &rarr; Build"><div class="cap">Open the Build area first</div><div class="sub">From any page in watsonx Orchestrate, click the hamburger menu (&#9776;) in the top-left and choose <strong>Build</strong> &mdash; that&rsquo;s where you create and manage agents.</div></div>
 <div class="agent">
   <div class="row"><span class="lbl">Agent name</span><span class="val name">[Your initials] compliance-orchestrator</span></div>
   <div class="row"><span class="lbl">Description</span><span class="val desc">Assesses a quality management document against ISO 9001:2015. Coordinates the gap analyser, policy rewriter and compliance reporter. Returns a short summary in chat, with full outputs on request. Upload a document via Chat with Documents to get started.</span></div>
@@ -155,7 +156,7 @@ footer.brand .tag{color:var(--mint);margin-top:8px;font-style:italic}
 Quality management compliance orchestrator for ISO 9001:2015. You coordinate the gap analyser, policy-rewriter and compliance-reporter.
 
 ## When a document is uploaded
-1. Read the full text of the uploaded file directly. watsonx Orchestrate's Chat with Documents feature extracts text from PDFs, DOCX, TXT and Markdown automatically — the extracted text is available to you in the conversation context. You DO have access to the document. Never reply with "I can't read the PDF" or "please paste the text" — the platform already handled the extraction for you.
+1. Read the full text of the uploaded PDF directly. watsonx Orchestrate's Chat with Documents feature extracts text from the PDF automatically — the extracted text is available to you in the conversation context. You DO have access to the document. Never reply with "I can't read the PDF" or "please paste the text" — the platform already handled the extraction for you.
 2. Confirm the extracted content is a quality manual or quality management procedure. If it is clearly something else (a slide deck, a CV, a policy on an unrelated topic, etc.), refuse politely with the message under "When the upload is not a quality document" below. Do not run the pipeline.
 3. If it is a quality document, run the pipeline in order:
    a. Send the full text to iso9001-gap-analyser.
@@ -206,67 +207,4 @@ Respond with: "This agent reviews quality management documents against ISO 9001:
     <tr><td class="num">4</td><td class="gname">critical_findings_flag</td><td>Gap analysis returns NON-COMPLIANT findings.</td><td>Highlight these clearly in the first response with a ⚠️ prefix.</td></tr>
     <tr><td class="num">5</td><td class="gname">compliant_section_skip</td><td>Gap analysis returns no gaps in a section.</td><td>Note as compliant — do not ask the rewriter to modify it.</td></tr>
     <tr><td class="num">6</td><td class="gname">iso_explainer</td><td>The user asks what ISO 9001 is.</td><td>Explain it is the international quality management standard — clauses 4 to 10.</td></tr>
-    <tr><td class="num">7</td><td class="gname">non_qms_refusal</td><td>The user uploads something that is not a quality document (slide deck, CV, unrelated policy, etc.).</td><td>Refuse politely, say what the file looks like, and ask for a quality manual or procedure. Do NOT run the pipeline.</td></tr>
-    <tr><td class="num">8</td><td class="gname">drill_down_without_upload</td><td>The user asks for a drill-down ('show the report', 'what's the score', etc.) but no document has been uploaded yet.</td><td>Don't ask them to paste text. Ask them to upload the quality manual using the paperclip in the chat.</td></tr>
-  </tbody>
-</table>
-
-
-<div class="ui-shot"><img src="ui-guidelines.png" alt="Guidelines — Add Guideline"><div class="cap">Guidelines — Add Guideline</div><div class="sub">Scroll to the Guidelines section and click <strong>Add Guideline</strong> for each row in the table above.</div></div>
-
-<h3>Step 4.5 — Enable Chat with Documents</h3>
-<ol class="steps">
-  <li>Open Settings on this agent.</li>
-  <li>Find the Chat with Documents toggle.</li>
-  <li>Switch it ON.</li>
-  <li>Verify a paperclip / upload icon appears in the playground chat.</li>
-</ol>
-<div class="footer-note">Without this toggle the gap analyser never receives the document — the pipeline won't run.</div>
-
-<div class="ui-shot"><img src="ui-chat-with-docs.png" alt="Chat with Documents — toggle ON"><div class="cap">Chat with Documents — toggle ON</div><div class="sub">In Settings, find the <strong>Chat with Documents</strong> toggle and switch it on.</div></div>
-
-<div class="pager">
-  <a href="step-3-compliance-reporter.html">← Step 3 — Compliance reporter</a>
-  <a href="step-5-test.html">Step 5 — Test →</a>
-</div>
-</main>
-
-<footer class="brand">
-  <div class="partners-footer">
-    <img src="Celerity_Logo.png" alt="Celerity">
-    <span class="x">&times;</span>
-    <img src="IBM_Logo.png" alt="IBM">
-  </div>
-  <div>info@celerity-uk.com  |  0845 565 2097  |  celerity-uk.com</div>
-  <div>Lab guide 2 — ISO 9001:2015 compliance agent</div>
-  <div class="tag">Transforming Technology. Empowering People.</div>
-</footer>
-
-<script>
-function copyPanel(btn){
-  const pre = btn.closest('.panel').querySelector('pre');
-  const text = pre.textContent;
-  navigator.clipboard.writeText(text).then(()=>{flash(btn);}).catch(()=>{
-    const range = document.createRange(); range.selectNodeContents(pre);
-    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
-    document.execCommand('copy'); sel.removeAllRanges(); flash(btn);
-  });
-}
-function copyCard(btn){
-  const card = btn.closest('.card');
-  const promptEl = card.querySelector('.prompt');
-  const text = promptEl ? promptEl.textContent.trim() : '';
-  navigator.clipboard.writeText(text).then(()=>{flash(btn);}).catch(()=>{
-    const range = document.createRange(); range.selectNodeContents(promptEl);
-    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
-    document.execCommand('copy'); sel.removeAllRanges(); flash(btn);
-  });
-}
-function flash(btn){
-  const original = btn.textContent;
-  btn.textContent = '✓ Copied'; btn.classList.add('copied');
-  setTimeout(()=>{btn.textContent = original; btn.classList.remove('copied');}, 1800);
-}
-</script>
-</body>
-</html>
+    <tr><td class="num">7</td><td class="gname">non_qms_refusal</td><td>The user uploads something that is not a quality document (slide deck, CV, unrelated policy, etc.).</td><td>Refuse politely, say what the file looks like, and ask for a quality manual or pr
